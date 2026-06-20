@@ -64,7 +64,12 @@ const Requests = () => {
   }
 
   if (requests.length === 0) {
-    return <h1 className="my-10 flex justify-center">No Requests Found</h1>;
+    return (
+      <div className="space-y-4 text-center">
+        {error ? <p className="text-red-500">{error}</p> : null}
+        <h1 className="my-10 flex justify-center">No Requests Found</h1>
+      </div>
+    );
   }
 
   return (

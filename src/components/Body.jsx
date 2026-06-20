@@ -1,4 +1,4 @@
-import { Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useLocation, useNavigate } from "react-router-dom";
 import NavBar from "./NavBar";
 import Footer from "./Footer";
 import axios from "axios";
@@ -14,6 +14,7 @@ import { useCallback, useEffect } from "react";
 const Body = () => {
 
   const dispatch = useDispatch();
+  const location = useLocation();
   const navigate = useNavigate();
   const userData = useSelector((store) => store.user);
 
@@ -27,7 +28,7 @@ const Body = () => {
   //  of the app and provides a better user experience by keeping them 
   // logged in across sessions.
   const fetchUser = useCallback(async () => {
-    if (userData) return; // If user data is already present in the Redux store,
+    if (userData || location.pathname === "/login") return; // If user data is already present in the Redux store,
     //  we can skip fetching it again
     try {
       const res = await axios.get(BASE_URL + "/profile/view", {
@@ -46,7 +47,7 @@ const Body = () => {
       }
       console.error(err);
     }
-  }, [dispatch, navigate, userData]);
+  }, [dispatch, location.pathname, navigate, userData]);
 
   useEffect(() => {
     fetchUser(); // Fetch user data when the Body component mounts

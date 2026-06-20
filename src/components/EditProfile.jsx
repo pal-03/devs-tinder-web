@@ -62,7 +62,11 @@ const EditProfile = ({ user }) => {
         setShowToast(false);
       }, 3000);
     } catch (err) {
-      setError(err.response.data);
+      setError(
+        err?.response?.data?.message ||
+          err?.response?.data ||
+          "Unable to save profile."
+      );
     }
   };
 

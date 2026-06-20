@@ -15,6 +15,7 @@ const Feed = () => {
   //  the feed state in the store with the data we fetch from the backend.
   const [error, setError] = useState("");
   const [actionLoading, setActionLoading] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
 
   const getFeed = useCallback(async () => {
     if (feed) return;
@@ -24,9 +25,12 @@ const Feed = () => {
       });
       // If the request is successful, we will get the feed data in the 
       // response
-      dispatch(addFeed(res?.data?.data));
+      dispatch(addFeed(res?.data?.data || []));
     } catch (error) {
       setError(error?.response?.data?.message || "Unable to load feed.");
+      dispatch(addFeed([]));
+    } finally {
+      setIsLoading(false);
     }
   }, [dispatch, feed]);
 
@@ -56,13 +60,14 @@ const Feed = () => {
     return () => clearTimeout(timer);
   }, [getFeed]);
 
-  if (feed === null) {
+  if (isLoading && feed === null) {
     return <p className="text-center">Loading feed...</p>;
   }
 
-  if (feed.length === 0) {
+  if (!feed || feed.length === 0) {
     return (
       <div className="space-y-4 text-center">
+        {error ? <p className="text-red-500">{error}</p> : null}
         <h1 className="text-3xl font-semibold">No more profiles</h1>
         <p className="text-base-content/70">
           You have reached the end of the current feed.

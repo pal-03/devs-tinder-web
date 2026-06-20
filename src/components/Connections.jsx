@@ -8,6 +8,7 @@ const Connections = () => {
   const connections = useSelector((store) => store.connections);
   const dispatch = useDispatch();
   const [error, setError] = useState("");
+  const [isLoading, setIsLoading] = useState(true);
   // The fetchConnections function is an asynchronous function that is
   //  called when the Connections component mounts.
   //  It sends a GET request to the server to retrieve the user's
@@ -21,9 +22,12 @@ const Connections = () => {
       const res = await axios.get(BASE_URL + "/user/connections", {
         withCredentials: true,
       });
-      dispatch(addConnections(res.data.data));
+      dispatch(addConnections(res.data.data || []));
     } catch (error) {
       setError(error?.response?.data?.message || "Unable to load connections.");
+      dispatch(addConnections([]));
+    } finally {
+      setIsLoading(false);
     }
   }, [dispatch]);
 
@@ -35,13 +39,16 @@ const Connections = () => {
     return () => clearTimeout(timer);
   }, [fetchConnections]);
 
-  if (connections === null) {
+  if (isLoading && connections === null) {
     return <p className="text-center">Loading connections...</p>;
   }
 
-  if (connections.length === 0) {
+  if (!connections || connections.length === 0) {
     return (
-      <h1 className="text-center text-2xl font-semibold">No Connections Found</h1>
+      <div className="space-y-4 text-center">
+        {error ? <p className="text-red-500">{error}</p> : null}
+        <h1 className="text-2xl font-semibold">No Connections Found</h1>
+      </div>
     );
   }
 
