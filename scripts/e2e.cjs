@@ -178,6 +178,7 @@ const delayedAction = async (page, endpoint, button, relatedButtons) => {
     await page.getByLabel('Last Name', { exact: true }).fill(lastName);
     await page.getByLabel('Email ID:').fill(emailId);
     await page.getByLabel('Password', { exact: true }).fill(password);
+    assert.equal(await page.getByRole('checkbox', { name: /Email me connection requests/ }).isChecked(), false);
     const response = await clickRequest(page, page.getByRole('button', { name: 'Sign Up', exact: true }), '/signup', 201);
     const user = (await response.json()).data;
     await page.waitForURL(origin + '/profile');
@@ -186,7 +187,29 @@ const delayedAction = async (page, endpoint, button, relatedButtons) => {
   const [alice, bob, carol, dave] = users;
   fixtures('isolate');
   await check('Four users sign up through browser and receive authenticated sessions', async () => {
-    for (const user of users) assert.equal((await api(user.page, '/profile/view'))._id, user._id);
+    for (const user of users) {
+      const profile = await api(user.page, '/profile/view');
+      assert.equal(profile._id, user._id);
+      assert.equal(profile.emailConsent.enabled, false);
+    }
+  });
+  await check('Email consent defaults off and cannot be forged through profile edits', async () => {
+    const checkbox = alice.page.getByRole('checkbox', { name: /Email me connection requests/ });
+    assert.equal(await checkbox.isChecked(), false);
+    assert.equal((await alice.page.request.patch(origin + '/api/profile/edit', { data: { emailConsent: { enabled: true, confirmedAt: new Date().toISOString() } } })).status(), 400);
+    if (!live) {
+      await clickRequest(alice.page, checkbox, '/profile/email-preferences');
+      await alice.page.getByText('Confirmation pending.', { exact: false }).waitFor();
+      assert.equal((await api(alice.page, '/profile/view')).emailConsent.enabled, true);
+      await alice.page.reload();
+      await alice.page.getByRole('heading', { name: 'Edit Profile', exact: true }).waitFor();
+      assert.equal(await checkbox.isChecked(), true);
+      await clickRequest(alice.page, checkbox, '/profile/email-preferences');
+    }
+    await alice.page.reload();
+    await alice.page.getByRole('heading', { name: 'Edit Profile', exact: true }).waitFor();
+    assert.equal(await checkbox.isChecked(), false);
+    return live ? 'Live inbox opt-in/confirmation is covered by test:email:live; no emails sent to synthetic example.com accounts.' : 'Opt-in, pending confirmation, withdrawal, and reload persistence verified.';
   });
   await check('Profile controls have independent labels', async () => {
     assert.equal(await alice.page.locator('label label').count(), 0, 'Nested labels associate Photo URL with Last Name');

@@ -4,6 +4,7 @@ import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch } from "react-redux";
 import { addUser } from "../utils/userSlice";
+import EmailPreferences from "./EmailPreferences";
 
 const EditProfile = ({ user }) => {
     // prefill the form fields with the current user's information by initializing the state variables
@@ -151,6 +152,7 @@ const EditProfile = ({ user }) => {
                   Save Profile
                 </button>
               </div>
+              <EmailPreferences user={user} />
             </div>
           </div>
         </div>

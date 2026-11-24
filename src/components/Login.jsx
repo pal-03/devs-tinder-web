@@ -11,6 +11,7 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
+  const [emailNotifications, setEmailNotifications] = useState(false);
   const [isLoginForm, setIsLoginForm] = useState(true);
   const [error, setError] = useState("");
   const dispatch = useDispatch();
@@ -65,7 +66,7 @@ const Login = () => {
     try {
       const res = await axios.post(
         BASE_URL + "/signup",
-        { firstName, lastName, emailId, password },
+        { firstName, lastName, emailId, password, emailNotifications },
         { withCredentials: true }
       );
       dispatch(addUser(res.data.data));
@@ -136,6 +137,12 @@ const Login = () => {
               />
             </label>
           </div>
+          {!isLoginForm && (
+            <label className="flex items-start gap-3 text-sm leading-6 cursor-pointer">
+              <input type="checkbox" className="checkbox checkbox-sm mt-1 shrink-0" checked={emailNotifications} onChange={(event) => setEmailNotifications(event.target.checked)} />
+              <span>Email me connection requests and daily pending-request reminders. I can unsubscribe at any time.</span>
+            </label>
+          )}
           <p className="text-red-500">{error}</p>
           <div className="card-actions justify-center m-2">
              <button

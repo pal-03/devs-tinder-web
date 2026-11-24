@@ -156,6 +156,8 @@ Body
 
 # Sending Emails via SES
 
+Email notifications now require explicit opt-in and email confirmation. Signup defaults to unchecked; existing users remain opted out. Profile > Email notifications supports enabling, resending confirmation and switching off. Connection notifications and daily reminders remain paused until confirmation. Emails include an unsubscribe link, and the backend suppresses addresses after permanent bounces or complaints through its private SES/SNS/SQS feedback pipeline. See the backend README for operational setup and the live inbox/simulator test.
+
     - Create a IAM user
     - Give Access to AmazonSESFullAccess
     - Amazon SES: Create an Identity
