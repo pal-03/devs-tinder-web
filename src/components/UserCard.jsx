@@ -3,7 +3,7 @@ const UserCard = ({ user, onAction, actionLoading = "", showActions = true }) =>
     //  for display
   const { _id, firstName, lastName, photoUrl, age, gender, about } = user;
   return (
-    <div className="card bg-base-300 w-96 shadow-xl">
+    <div className="card bg-base-300 w-full max-w-sm min-w-0 break-words shadow-xl">
       <figure>
         <img src={photoUrl} alt="photo" />
       </figure>
@@ -16,7 +16,7 @@ const UserCard = ({ user, onAction, actionLoading = "", showActions = true }) =>
             <button
               type="button"
               className="btn btn-primary"
-              disabled={actionLoading === `ignored:${_id}`}
+              disabled={Boolean(actionLoading)}
               onClick={() => onAction?.("ignored", _id)}
             >
               {actionLoading === `ignored:${_id}` ? "Ignoring..." : "Ignore"}
@@ -24,7 +24,7 @@ const UserCard = ({ user, onAction, actionLoading = "", showActions = true }) =>
             <button
               type="button"
               className="btn btn-secondary"
-              disabled={actionLoading === `interested:${_id}`}
+              disabled={Boolean(actionLoading)}
               onClick={() => onAction?.("interested", _id)}
             >
               {actionLoading === `interested:${_id}`

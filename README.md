@@ -1,3 +1,27 @@
+# Current Setup
+
+- Node.js: 24.14.1 (development and EC2).
+- Frontend: `npm install`, then `npm run dev` at `http://localhost:5173`.
+- Backend: run `npm run start:local` in the backend repository for a temporary local database. Email and cron are disabled in this mode, and data is lost when the process stops.
+- For Atlas, configure the backend `.env` from `.env.example` and use `npm start`. The cluster must be resumed, and the backend's outgoing public IP must be in the Atlas access list.
+
+## Verification
+
+- `npm run lint` and `npm run build` check the frontend.
+- `npm run test:e2e` runs Playwright against an isolated database with email disabled. The sibling backend path can be overridden with `DEVTINDER_BACKEND_DIR`.
+- Run `npx playwright install chromium` once if the browser binary is missing.
+- `npm test` in the backend repository runs its API and email regression tests.
+- `npm run test:e2e -- --live` verifies `https://devs-tinder.in`. Set `E2E_SSH_KEY` to the existing EC2 key path. Set `E2E_REMOTE_BACKEND_DIR` only when verifying a staged backend release.
+- Live tests create up to 16 uniquely named synthetic accounts, exclude real profiles from their feeds, and remove only that run's accounts and requests afterward. Disable outbound email and cron during the live run. No payment is submitted.
+- Screenshots and reports are written under ignored `artifacts/` directories.
+
+## Production Recovery
+
+- The backend must run under PM2 as `devTinder-backend` on port 7777. Nginx forwards `/api/` to `http://127.0.0.1:7777/`.
+- PM2's process list must be saved and the `pm2-ubuntu` systemd service enabled so the backend returns after a reboot.
+- Verify `https://devs-tinder.in/api/health` returns 200. Health checks include a database ping and return 503 if Atlas is unavailable.
+- Payment gateway integration currently exists only in the learning notes; no payment UI or backend API has been implemented.
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
@@ -145,3 +169,15 @@ Body
     - Write code for SESClient
     - Write code for Sending email address
     - Make the email dynamic by passing more params to the run function
+
+# Scheduling cron jobs in NodeJS
+    - Installing node-cron
+    - Learning about cron expressions syntax - crontab.guru
+    - Schedule a job
+    - date-fns
+    - Find all the unique  email Id who have got connection Request in previous day
+    - Send Email
+    - Explore queue mechanim to send bulk emails
+    - Amazon SES Bulk Emails
+    - Make sendEmail function dynamic
+    - bee-queue & bull npm packages

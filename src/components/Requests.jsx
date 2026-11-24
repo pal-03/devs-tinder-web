@@ -86,24 +86,24 @@ const Requests = () => {
         return (
           <div
             key={request._id}
-            className="mx-auto my-4 flex items-center justify-between rounded-lg bg-base-300 p-4"
+            className="mx-auto my-4 flex max-w-3xl flex-wrap items-center gap-4 rounded-lg bg-base-300 p-4 sm:flex-nowrap"
           >
-            <div>
+            <div className="shrink-0">
               <img
                 alt={`${firstName} ${lastName}`}
                 className="h-20 w-20 rounded-full object-cover"
                 src={photoUrl}
               />
             </div>
-            <div className="mx-4 text-left">
+            <div className="min-w-0 flex-1 break-words text-left">
               <h2 className="text-xl font-bold">{firstName + " " + lastName}</h2>
               {age && gender ? <p>{age + ", " + gender}</p> : null}
               <p>{about}</p>
             </div>
-            <div>
+            <div className="flex w-full shrink-0 justify-end sm:w-auto">
               <button
                 className="btn btn-primary mx-2"
-                disabled={reviewingId === `rejected:${request._id}`}
+                disabled={Boolean(reviewingId)}
                 onClick={() => reviewRequest("rejected", request._id)}
                 type="button"
               >
@@ -111,7 +111,7 @@ const Requests = () => {
               </button>
               <button
                 className="btn btn-secondary mx-2"
-                disabled={reviewingId === `accepted:${request._id}`}
+                disabled={Boolean(reviewingId)}
                 onClick={() => reviewRequest("accepted", request._id)}
                 type="button"
               >

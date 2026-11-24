@@ -70,4 +70,20 @@
 // - Security: Nginx can provide additional security features, such as filtering requests, blocking malicious traffic, and protecting against DDoS attacks.
 // Overall, Nginx proxy passing is a powerful feature that allows Nginx to act as a reverse proxy server, providing various benefits for web applications and services. 
 
+// Payment Gateway working
+// the patment
+// 2 steps
+// 1: Creating an order
+// 2: Verify the payment
+// 2 apis for the two steps
 
+// Backend interacts with payment gateway(razor pay) // has secret key
+// The backend knows
+// 1: how to create an order
+// 2: how to verify the payment
+// The backend needs to know
+// 1: how to create an order
+// 2: how to verify the payment
+// 3: how to send the response to the frontend
+// 4: how to send the response to the frontend
+// 5: how to send the response to the frontend

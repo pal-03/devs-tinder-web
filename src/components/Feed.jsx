@@ -1,7 +1,7 @@
 import axios from "axios";
 import { BASE_URL } from "../utils/constants";
 import { useDispatch, useSelector } from "react-redux";
-import { addFeed, removeUserFromFeed } from "../utils/feedSlice";
+import { addFeed, removeFeed, removeUserFromFeed } from "../utils/feedSlice";
 import { useCallback, useEffect, useState } from "react";
 import UserCard from "./UserCard";
 
@@ -43,7 +43,13 @@ const Feed = () => {
         {},
         { withCredentials: true }
       );
-      dispatch(removeUserFromFeed(userId));
+      if (feed.length === 1) {
+        // Handled profiles are excluded by the API, so refill from its first page.
+        setIsLoading(true);
+        dispatch(removeFeed());
+      } else {
+        dispatch(removeUserFromFeed(userId));
+      }
     } catch (error) {
       setError(error?.response?.data?.message || "Unable to send request.");
     } finally {
