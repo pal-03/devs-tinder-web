@@ -126,6 +126,8 @@ const delayedAction = async (page, endpoint, button, relatedButtons) => {
   process.env.PORT = '7778';
   process.env.DISABLE_EMAILS = 'true';
   process.env.DISABLE_CRON = 'true';
+  process.env.SES_FEEDBACK_QUEUE_URL = '';
+  process.env.SES_FEEDBACK_TOPIC_ARN = '';
   process.env.NODE_ENV = 'test';
   const { MongoMemoryServer } = beRequire('mongodb-memory-server');
   mongo = await MongoMemoryServer.create({ instance: { dbName: 'devtinder-playwright' } });
