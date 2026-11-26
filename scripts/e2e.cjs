@@ -53,7 +53,7 @@ const check = async (name, action) => {
 let browser, vite, mongo, stopServer;
 const contexts = [];
 const newPage = async (viewport = { width: 1440, height: 1000 }) => {
-  const context = await browser.newContext({ viewport });
+  const context = await browser.newContext({ viewport, hasTouch: viewport.width < 768 });
   contexts.push(context);
   const page = await context.newPage();
   page.setDefaultTimeout(live ? 20000 : 7000);
@@ -195,6 +195,21 @@ const delayedAction = async (page, endpoint, button, relatedButtons) => {
       assert.equal(profile.emailConsent.enabled, false);
     }
   });
+  await check('Mobile avatar menu closes after navigation and the avatar remains tappable', async () => {
+    const page = await newPage({ width: 390, height: 844 });
+    await page.context().addCookies(await alice.page.context().cookies());
+    await page.goto(origin + '/');
+    const avatar = page.getByRole('button', { name: 'Account menu' });
+    // Selecting Profile twice covers both navigating to it and tapping its link while already there.
+    for (const [label, path] of [['Profile', '/profile'], ['Profile', '/profile'], ['Connections', '/connections']]) {
+      await avatar.tap();
+      const link = page.getByRole('link', { name: label, exact: true });
+      await link.tap();
+      await page.waitForURL(origin + path);
+      await link.waitFor({ state: 'hidden' });
+      assert.equal(await avatar.getAttribute('aria-expanded'), 'false');
+    }
+  });
   await check('Email consent defaults off and cannot be forged through profile edits', async () => {
     const checkbox = alice.page.getByRole('checkbox', { name: /Email me connection requests/ });
     assert.equal(await checkbox.isChecked(), false);
@@ -283,7 +298,7 @@ const delayedAction = async (page, endpoint, button, relatedButtons) => {
     assert.equal((await bob.page.request.post(origin + '/api/request/review/accepted/' + dave.requestId)).status(), 404);
   });
   await check('Logout clears cookie, protects pages, and login restores profile', async () => {
-    await alice.page.locator('.avatar[role="button"]').click();
+    await alice.page.getByRole('button', { name: 'Account menu' }).click();
     await clickRequest(alice.page, alice.page.getByRole('button', { name: 'Logout', exact: true }), '/logout');
     await alice.page.waitForURL(origin + '/login');
     assert.equal((await alice.page.request.get(origin + '/api/profile/view')).status(), 401);
