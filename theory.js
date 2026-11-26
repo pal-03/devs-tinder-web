@@ -85,5 +85,20 @@
 // 1: how to create an order
 // 2: how to verify the payment
 // 3: how to send the response to the frontend
-// 4: how to send the response to the frontend
-// 5: how to send the response to the frontend
+
+// fe cannot directly interact with the payment gateway because 
+// it would expose the secret key and other sensitive
+//  information. Instead, the frontend sends a request
+//  to the backend to create an order,
+//  and the backend handles the interaction with the
+//  payment gateway using the secret key.
+//  Once the payment is processed, the backend 
+// verifies the payment and sends a response back 
+// to the frontend, indicating whether the payment was
+//  successful or not. This ensures that sensitive information
+//  remains secure and that the payment process is handled correctly.
+
+// after paymrnt is done, razor pay has a webhook which will send the 
+// payment status to our backend.
+// payment id and signature will be sent to our backend
+// so that we can verify   from razor pay webhook
