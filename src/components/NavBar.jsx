@@ -34,8 +34,9 @@ const NavBar = () => {
       </div>
       {user ? (
         <div className="flex-none gap-2">
-          <div className="form-control">Welcome, {user.firstName}</div>
-          <div className="dropdown dropdown-end mx-5 flex">
+          <div className="form-control max-w-24 truncate text-sm sm:max-w-none sm:text-base">Welcome, {user.firstName}</div>
+          {user.isPremium && <span className="badge badge-sm hidden sm:inline-flex">{user.membershipType} member</span>}
+          <div className="dropdown dropdown-end mx-1 flex shrink-0 sm:mx-5">
             <div
               tabIndex={0}
               role="button"
@@ -57,6 +58,9 @@ const NavBar = () => {
               </li>
               <li>
                 <Link to="/requests">Requests</Link>
+              </li>
+              <li>
+                <Link to="/premium">Premium</Link>
               </li>
               <li>
                 <button type="button" onClick={handleLogout}>

@@ -8,6 +8,7 @@
     "build": "vite build",
     "lint": "eslint .",
     "test:e2e": "node scripts/e2e.cjs",
+    "test:payments": "node scripts/payment-e2e.cjs",
     "preview": "vite preview"
   },
   "dependencies": {

@@ -156,6 +156,12 @@ Body
 
 # Sending Emails via SES
 
+## Razorpay Checkout
+
+Premium uses backend-owned Silver/Gold prices, lazy-loads Razorpay Checkout and verifies the success callback on the server. Membership is granted only after capture; closing Checkout is not proof of success or failure. Payment History supports checking gateway status after interruptions. Test mode is labelled and moves no real money. Backend-only `.env` settings supply the key ID; never add key secrets or webhook secrets to Vite variables or frontend code.
+
+Run `npm run test:payments` for isolated browser/API/database payment checks, and `npm run test:e2e` for the existing application regression suite. The mocked tests are not proof of delivery from the real gateway: also verify an actual Razorpay Test Mode checkout and its signed webhook against the deployed endpoint. See the backend README for configuration and live-mode safeguards. Chat/request-limit benefits remain separate unfinished product work.
+
 Email notifications now require explicit opt-in and email confirmation. Signup defaults to unchecked; existing users remain opted out. Profile > Email notifications supports enabling, resending confirmation and switching off. Connection notifications and daily reminders remain paused until confirmation. Emails include an unsubscribe link, and the backend suppresses addresses after permanent bounces or complaints through its private SES/SNS/SQS feedback pipeline. See the backend README for operational setup and the live inbox/simulator test.
 
     - Create a IAM user
@@ -183,3 +189,20 @@ Email notifications now require explicit opt-in and email confirmation. Signup d
     - Amazon SES Bulk Emails
     - Make sendEmail function dynamic
     - bee-queue & bull npm packages
+
+
+# Razorpay Payment Gateway Inegration
+    - Sign up on Razorpay & complete KYC
+    - Cerated a UI for premium page
+    - Creating an API for create order in backend
+    - added my key and secret in env file
+    - Intialized Razorpay in utils
+    - creating order on Razorpay
+    - create Schema and model
+    - saved the order in payments collection
+    - make the API dynamic
+    - Setup RRazorpay webhook on your live APi
+    - Ref - https://github.com/razorpay/razorpay-node/tree/master/documents
+    - Ref - https://razorpay.com/docs/payments/server-integration/nodejs/integration-steps/#integrate-with-razorpay-payment-gateway
+    - Ref - https://razorpay.com/docs/webhooks/validate-test/
+    - Ref - https://razorpay.com/docs/webhooks/payloads/payments/

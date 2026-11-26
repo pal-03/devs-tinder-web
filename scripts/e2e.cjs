@@ -148,12 +148,12 @@ const delayedAction = async (page, endpoint, button, relatedButtons) => {
   browser = await chromium.launch({ headless: process.env.E2E_HEADED !== 'true' });
   const anon = await newPage();
   await check('Protected pages redirect to login; protected APIs reject unauthenticated requests', async () => {
-    for (const route of ['/', '/profile', '/requests', '/connections']) {
+    for (const route of ['/', '/profile', '/requests', '/connections', '/premium']) {
       await anon.goto(origin + route);
       await anon.waitForURL(origin + '/login');
       await anon.getByRole('button', { name: 'Login', exact: true }).waitFor();
     }
-    for (const route of ['/profile/view', '/feed', '/user/requests/received', '/user/connections']) {
+    for (const route of ['/profile/view', '/feed', '/user/requests/received', '/user/connections', '/payment/membership']) {
       assert.equal((await anon.request.get(origin + '/api' + route)).status(), 401, route);
     }
     await screenshot(anon, 'desktop-login');
