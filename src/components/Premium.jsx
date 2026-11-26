@@ -73,6 +73,7 @@ const Premium = () => {
       // 4. After the payment is completed, send Razorpay's response to the backend to verify the payment.
       // 5. The backend will verify the payment and update the user's membership status accordingly.
       const Razorpay = await loadRazorpay();
+      // Reuse this tab's request ID after dismissal or reload so the backend can return the same order.
       let requestId = sessionStorage.getItem(pendingKey);
       if (!requestId) { requestId = crypto.randomUUID(); sessionStorage.setItem(pendingKey, requestId); }
       const order = await axios.post(BASE_URL + "/payment/create", { membershipType: type }, {
@@ -85,6 +86,7 @@ const Premium = () => {
         const { data } = await axios.get(BASE_URL + "/payment/status/" + orderId, { withCredentials: true });
         await complete(data); unlock(); return;
       }
+      // Closing the modal can also trigger ondismiss after success or failure. Keep that callback from overwriting the result.
       let settled = false;
       const options = {
         key: keyId, amount, currency, name: "DevTinder", description: title(type) + " membership", order_id: orderId,
@@ -95,6 +97,7 @@ const Premium = () => {
           settled = true;
           if (mounted.current) setBusy("Verifying payment...");
           try {
+            // Checkout returns a signed receipt, not permission to unlock Premium. Display the backend's verified result.
             const { data } = await axios.post(BASE_URL + "/payment/verify", response, { withCredentials: true });
             sessionStorage.removeItem(pendingKey);
             await complete(data);

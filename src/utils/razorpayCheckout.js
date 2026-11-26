@@ -2,6 +2,7 @@ let pending;
 
 export const loadRazorpay = () => {
   if (window.Razorpay) return Promise.resolve(window.Razorpay);
+  // Share one script load across callers. On failure, clear it so the next checkout can retry.
   if (pending) return pending;
   pending = new Promise((resolve, reject) => {
     const script = document.createElement("script");
