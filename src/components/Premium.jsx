@@ -89,6 +89,7 @@ const Premium = () => {
       const options = {
         key: keyId, amount, currency, name: "DevTinder", description: title(type) + " membership", order_id: orderId,
         prefill: { name: [notes.firstName, notes.lastName].filter(Boolean).join(" "), email: notes.emailId },
+        hidden: { contact: true },
         theme: { color: "#605dff" }, retry: { enabled: false },
         handler: async (response) => {
           settled = true;

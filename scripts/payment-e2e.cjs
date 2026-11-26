@@ -100,6 +100,7 @@ const check = async (name, fn) => {
 
   await check('Silver checkout succeeds, verifies on server and remains active after reload', async () => {
     const { page, user } = await signup(); const order = await buy(page); const payment = capture(order);
+    assert.equal(await page.evaluate(() => window.paymentCheckout.options.hidden.contact), true);
     assert.equal(await page.getByRole('button', { name: 'Buy Gold', exact: true }).isDisabled(), true);
     await finish(page, order, payment);
     assert.equal((await User.findById(user._id)).isPremium, true);
